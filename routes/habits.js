@@ -1,17 +1,18 @@
 import express from 'express';
 import { createHabit, deleteHabit, getHabit, getHabits, updateHabit } from '../controllers/habits.js';
+import { verifyToken } from '../middleware/verifyToken.js';
 
 const router = express.Router();
 
 router
     .route("/")
-    .get(getHabits)
-    .post(createHabit)
+    .get(verifyToken, getHabits)
+    .post(verifyToken, createHabit)
 
 router
     .route("/:id")
-    .get(getHabit)
-    .put(updateHabit)
-    .delete(deleteHabit)
+    .get(verifyToken, getHabit)
+    .put(verifyToken, updateHabit)
+    .delete(verifyToken, deleteHabit)
 
 export default router;

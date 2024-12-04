@@ -4,8 +4,9 @@ import Habit from "../models/habits.js";
 // @route   GET /api/habits
 // @access   Public
 export const getHabits = async (req, res, next) => {
+    const userId = req.user.uid;
     try {
-        const habits = await Habit.find();
+        const habits = await Habit.find({ userId });
         res.status(200).json({ 
             success: true, 
             message: 'Show all habits', 
@@ -22,10 +23,11 @@ export const getHabits = async (req, res, next) => {
 // @route   GET /api/habits/:id
 // @access   Public
 export const getHabit = async (req, res, next) => {
+    const userId = req.user.uid;
     const id = req.params.id;
 
     try {
-        const habit = await Habit.findById(id);
+        const habit = await Habit.findOne({ _id: id, userId: userId });
         if (!habit) {
             return res.status(404).json({ success: false, message: `Habit with id ${id} not found.` });
         }
@@ -45,13 +47,14 @@ export const getHabit = async (req, res, next) => {
 // @route   POST /api/habits/
 // @access   Private
 export const createHabit = async (req, res, next) => {
+    const userId = req.user.uid;
     try {
         const { name, category } = req.body;
         if (!name || !category) {
             return res.status(400).json({ success: false, message: 'Name and category are required' });
         }
 
-        const habit = new Habit({ name, category });
+        const habit = new Habit({ name, category, userId });
         const savedHabit = await habit.save();
         res.status(201).json({
             success: true,
@@ -68,10 +71,11 @@ export const createHabit = async (req, res, next) => {
 // @route   PUT /api/habits/:id
 // @access   Private
 export const updateHabit = async (req, res, next) => {
+    const userId = req.user.uid;
     const id = req.params.id;
 
     try {
-        const habit = await Habit.findById(id);
+        const habit = await Habit.findOne({ _id: id, userId: userId });
         if (!habit) {
             return res.status(404).json({ success: false, message: `Habit with id ${id} not found.` });
         }
@@ -97,9 +101,10 @@ export const updateHabit = async (req, res, next) => {
 // @route   DELETE /api/habits/:id
 // @access   Private
 export const deleteHabit = async (req, res, next) => {
+    const userId = req.user.uid;
     const id = req.params.id;
     try {
-        const habit = await Habit.findById(id);
+        const habit = await Habit.findOne({ _id: id, userId: userId });
         if (!habit) {
             return res.status(404).json({ success: false, message: `Habit with id ${id} not found.` });
         }

@@ -8,7 +8,8 @@ const habitSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-    }
+    },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 
 const Habit = new mongoose.model('Habit', habitSchema);
