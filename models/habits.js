@@ -1,6 +1,6 @@
-import { Schema, Model } from "mongoose";
+import mongoose from "mongoose";
 
-const habitSchema = new Schema({
+const habitSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -8,13 +8,9 @@ const habitSchema = new Schema({
     category: {
         type: String,
         required: true,
-    },
-    description: {
-        type: String,
-        required: true,
     }
 }, { timestamps: true });
 
-const Habit = new Model('Habit', habitSchema);
+const Habit = new mongoose.model('Habit', habitSchema);
 
 export default Habit;
