@@ -7,15 +7,13 @@ export const getHabits = async (req, res, next) => {
     const userId = req.user.uid;
     try {
         const habits = await Habit.find({ userId });
-        res.status(200).json({ 
-            success: true, 
-            message: 'Show all habits', 
+        res.status(200).json({
+            success: true,
+            results: habits.length,
             data: habits
         });
     } catch (err) {
-        console.log(err);
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Server error, please try again later.' });
+        res.status(400).json({ success: false, message: 'Server error, please try again later.' });
     }
 }
 
@@ -29,17 +27,17 @@ export const getHabit = async (req, res, next) => {
     try {
         const habit = await Habit.findOne({ _id: id, userId: userId });
         if (!habit) {
-            return res.status(404).json({ success: false, message: `Habit with id ${id} not found.` });
+            return res.status(404).json({
+                success: false,
+                message: `Habit with id ${id} not found.`
+            });
         }
-        res.status(200).json({ 
-            success: true, 
-            message: `Show habit ${id}`,
+        res.status(200).json({
+            success: true,
             data: habit
         });
     } catch (err) {
-        console.log(err);
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Server error, please try again later.' });
+        res.status(400).json({ success: false, message: 'Server error, please try again later.' });
     }
 }
 
@@ -58,12 +56,10 @@ export const createHabit = async (req, res, next) => {
         const savedHabit = await habit.save();
         res.status(201).json({
             success: true,
-            message: 'New habit created successfully',
             data: savedHabit,
         });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Server error, please try again later.' });
+        res.status(400).json({ success: false, message: 'Server error, please try again later.' });
     }
 }
 
@@ -71,31 +67,40 @@ export const createHabit = async (req, res, next) => {
 // @route   PUT /api/habits/:id
 // @access   Private
 export const updateHabit = async (req, res, next) => {
-    const userId = req.user.uid;
-    const id = req.params.id;
+    const userId = req.user.uid; // Identificar l'usuari autenticat
+    const id = req.params.id; // ID de l'hàbit
 
     try {
-        const habit = await Habit.findOne({ _id: id, userId: userId });
+        const habit = await Habit.findOne({ _id: id, userId });
+
         if (!habit) {
-            return res.status(404).json({ success: false, message: `Habit with id ${id} not found.` });
+            return res.status(404).json({
+                success: false,
+                message: `Habit with id ${id} not found or doesn't belong to the user.`,
+            });
         }
 
-        const { name, category } = req.body;
-        if (name) habit.name = name;
-        if (category) habit.category = category;
+        const updatedHabit = await Habit.findByIdAndUpdate(
+            id,
+            req.body,
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
 
-        const updatedHabit = await habit.save();
         res.status(200).json({
             success: true,
-            message: `Habit with id ${id} updated successfully`,
             data: updatedHabit,
         });
-
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Server error, please try again later.' });
+        res.status(400).json({
+            success: false,
+            message: 'Server error, please try again later.',
+        });
     }
-}
+};
+
 
 // @desc   Delete habit
 // @route   DELETE /api/habits/:id
@@ -103,19 +108,28 @@ export const updateHabit = async (req, res, next) => {
 export const deleteHabit = async (req, res, next) => {
     const userId = req.user.uid;
     const id = req.params.id;
+
     try {
-        const habit = await Habit.findOne({ _id: id, userId: userId });
+        const habit = await Habit.findOne({ _id: id, userId });
+
         if (!habit) {
-            return res.status(404).json({ success: false, message: `Habit with id ${id} not found.` });
+            return res.status(404).json({
+                success: false,
+                message: `Habit with id ${id} not found or doesn't belong to the user.`,
+            });
         }
 
-        await habit.remove();
+        await Habit.findByIdAndDelete(id);
+
         res.status(200).json({
             success: true,
-            message: `Habit with id ${id} deleted successfully`,
+            data: {},
         });
+
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Server error, please try again later.' });
+        res.status(400).json({
+            success: false,
+            message: 'Server error, please try again later.',
+        });
     }
-}
+};
