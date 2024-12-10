@@ -1,15 +1,17 @@
-export  const verifyToken = async (req, res, next) => {
-    const idToken = req.headers.authorization;
-    if (!idToken) {
-      return res.status(403).send('Token not provided');
+import admin from 'firebase-admin';
+
+export const verifyToken = async (req, res, next) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');  // Extract token
+
+    if (!token) {
+        return res.status(400).json({ message: 'Token is required' });  // Respond with a specific error
     }
-  
+
     try {
-      const decodedToken = await firebaseAdmin.auth().verifyIdToken(idToken);
-      req.user = decodedToken;
-      next();
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;  // Attach user info to request
+        next();  // Proceed to the next middleware or route handler
     } catch (error) {
-        console.error('Error verifying token:', error);
-        res.status(401).send('Invalid or expired token');
+        return res.status(400).json({ message: 'Invalid or expired token' });  // Invalid token
     }
-  };
+};

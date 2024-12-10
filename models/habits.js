@@ -34,7 +34,7 @@ const habitSchema = new mongoose.Schema({
         message: 'Please select a valid frequency'
     },
     timeOfDay: {
-        type: Date,
+        type: String,
         required: [true, 'Please specify a time of day'],
         match: [/^(?:[01]\d|2[0-3]):([0-5]\d)$/, 'Please enter a valid time in HH:mm format']
     },
