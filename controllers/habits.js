@@ -1,11 +1,22 @@
 import Habit from "../models/habits.js";
+import { calculateEndTime } from "../utils/calculateEndTime.js";
 
 // @desc   Get all habits
 // @route   GET /api/habits
 // @access   Public
 export const getHabits = async (req, res, next) => {
     const userId = req.user.uid;
+
+    if (!userId) {
+        console.error("No user ID found in request");
+        return res.status(400).json({
+            success: false,
+            message: "User not authenticated, no user ID found",
+        });
+    }
+
     try {
+        console.log("Fetching habits for user: ", userId);
         const habits = await Habit.find({ userId });
         res.status(200).json({
             success: true,
@@ -13,7 +24,12 @@ export const getHabits = async (req, res, next) => {
             data: habits
         });
     } catch (err) {
-        res.status(400).json({ success: false, message: 'Server error, please try again later.' });
+        console.error("Error in getHabits: ", err)
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error, please try again later.',
+            error: err.message, 
+         });
     }
 }
 
@@ -47,18 +63,32 @@ export const getHabit = async (req, res, next) => {
 export const createHabit = async (req, res, next) => {
     const userId = req.user.uid;
     try {
-        const { name, category } = req.body;
+        const { name, category, frequency, timeOfDay, duration, date } = req.body;
         if (!name || !category) {
             return res.status(400).json({ success: false, message: 'Name and category are required' });
         }
 
-        const habit = new Habit({ name, category, userId });
+        const habit = new Habit({ name, category, frequency, timeOfDay, duration, date, userId });
         const savedHabit = await habit.save();
+
+        const endTime = calculateEndTime(newHabit.timeOfDay, newHabit.duration);
+
+        const startDateTime = new Date(`${newHabit.date}T${newHabit.timeOfDay}:00`);
+        const endDateTime = new Date(`${newHabit.date}T${endTime}:00`);
+
+        const event = {
+            title: savedHabit.name,
+            start: startDateTime.toISOString(),
+            end: endDateTime.toISOString()
+        }
+
         res.status(201).json({
             success: true,
             data: savedHabit,
+            event: event,
         });
     } catch (err) {
+        console.error("Error creating habit:", err);
         res.status(400).json({ success: false, message: 'Server error, please try again later.' });
     }
 }
@@ -67,8 +97,8 @@ export const createHabit = async (req, res, next) => {
 // @route   PUT /api/habits/:id
 // @access   Private
 export const updateHabit = async (req, res, next) => {
-    const userId = req.user.uid; // Identificar l'usuari autenticat
-    const id = req.params.id; // ID de l'hàbit
+    const userId = req.user.uid; 
+    const id = req.params.id; 
 
     try {
         const habit = await Habit.findOne({ _id: id, userId });

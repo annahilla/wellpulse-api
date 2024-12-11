@@ -22,8 +22,13 @@ try {
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:5173", 
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
+app.use(cors(corsOptions));
+app.use(express.json());
 app.use("/api/habits", habits);
 app.use("/api/options", options);
 

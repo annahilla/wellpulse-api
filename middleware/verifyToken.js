@@ -1,17 +1,17 @@
 import admin from 'firebase-admin';
 
 export const verifyToken = async (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');  // Extract token
+  const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
-        return res.status(400).json({ message: 'Token is required' });  // Respond with a specific error
+        return res.status(400).json({ message: 'Token is required' });  
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;  // Attach user info to request
-        next();  // Proceed to the next middleware or route handler
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        req.user = decodedToken;
+        next();  
     } catch (error) {
-        return res.status(400).json({ message: 'Invalid or expired token' });  // Invalid token
+        return res.status(400).json({ message: 'Invalid or expired token' });
     }
 };

@@ -35,8 +35,7 @@ const habitSchema = new mongoose.Schema({
     },
     timeOfDay: {
         type: String,
-        required: [true, 'Please specify a time of day'],
-        match: [/^(?:[01]\d|2[0-3]):([0-5]\d)$/, 'Please enter a valid time in HH:mm format']
+        required: [true, 'Please specify a time of day']
     },
     duration: {
         type: Number,
@@ -50,7 +49,7 @@ const habitSchema = new mongoose.Schema({
         default: Date.now
     },
     userId: { 
-        type: mongoose.Schema.Types.ObjectId, 
+        type: String, 
         ref: 'User' 
     }
 }, { timestamps: true });
