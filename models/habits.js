@@ -44,6 +44,20 @@ const habitSchema = new mongoose.Schema({
         max: [1440, 'Duration must not exceed 1440 minutes (24 hours)'],
         message: 'Please provide a valid duration'
     },
+    events: {
+        start: {
+            type: Date,
+            required: true
+        },
+        end: {
+            type: Date,
+            required: true
+        },
+        title: {
+            type: String,
+            required: true
+        }
+    },
     createdAt: {
         type: Date,
         default: Date.now

@@ -1,13 +1,12 @@
-export const calculateEndTime = (start, duration) => {
-    const [hours, minutes] = start.split(':').map(Number);
+export const calculateEndTime = (timeOfDay, duration) => {
+    const [hours, minutes] = timeOfDay.split(":").map(Number);
+    const startDate = new Date();
+    startDate.setHours(hours, minutes, 0, 0);
 
-    let totalMinutes = hours * 60 + minutes + duration;
-
-    const newHours = Math.floor(totalMinutes / 60);
-    const newMinutes = totalMinutes % 60;
-
-    const formattedHours = String(newHours).padStart(2, '0');
-    const formattedMinutes = String(newMinutes).padStart(2, '0');
-
-    return `${formattedHours}:${formattedMinutes}`;
+    const endDate = new Date(startDate.getTime() + duration * 60 * 1000); 
+    
+    const endHours = endDate.getHours();
+    const endMinutes = endDate.getMinutes();
+    
+    return `${endHours.toString().padStart(2, "0")}:${endMinutes.toString().padStart(2, "0")}`;
 };

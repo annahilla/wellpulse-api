@@ -68,13 +68,27 @@ export const createHabit = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Name and category are required' });
         }
 
-        const habit = new Habit({ name, category, frequency, timeOfDay, duration, date, userId });
+        const habit = new Habit({ 
+            name, 
+            category, 
+            frequency, 
+            timeOfDay, 
+            duration, 
+            date, 
+            userId,
+            events: {
+                title: name,
+                start: startDateTime,
+                end: endDateTime
+            }
+        });
+
         const savedHabit = await habit.save();
 
-        const endTime = calculateEndTime(newHabit.timeOfDay, newHabit.duration);
+        const endTime = calculateEndTime(timeOfDay, duration);
 
-        const startDateTime = new Date(`${newHabit.date}T${newHabit.timeOfDay}:00`);
-        const endDateTime = new Date(`${newHabit.date}T${endTime}:00`);
+        const startDateTime = new Date(`${date}T${timeOfDay}:00`);
+        const endDateTime = new Date(`${date}T${endTime}:00`);
 
         const event = {
             title: savedHabit.name,
@@ -84,7 +98,7 @@ export const createHabit = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            data: savedHabit,
+            habit: savedHabit,
             event: event,
         });
     } catch (err) {
