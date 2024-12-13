@@ -28,8 +28,7 @@ const habitSchema = new mongoose.Schema({
         required: [true, 'Please select the frequency of the habit'],
         enum: [
             'Daily',
-            'Weekly',
-            'Monthly'
+            'Weekly'
         ],
         message: 'Please select a valid frequency'
     },
@@ -44,27 +43,17 @@ const habitSchema = new mongoose.Schema({
         max: [1440, 'Duration must not exceed 1440 minutes (24 hours)'],
         message: 'Please provide a valid duration'
     },
-    events: {
-        start: {
-            type: Date,
-            required: true
-        },
-        end: {
-            type: Date,
-            required: true
-        },
-        title: {
-            type: String,
-            required: true
-        }
+    date: {
+        type: String,
+        required: [true, 'Please select a date']
     },
     createdAt: {
         type: Date,
         default: Date.now
     },
-    userId: { 
-        type: String, 
-        ref: 'User' 
+    userId: {
+        type: String,
+        ref: 'User'
     }
 }, { timestamps: true });
 

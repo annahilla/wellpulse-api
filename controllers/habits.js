@@ -25,11 +25,11 @@ export const getHabits = async (req, res, next) => {
         });
     } catch (err) {
         console.error("Error in getHabits: ", err)
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             message: 'Server error, please try again later.',
-            error: err.message, 
-         });
+            error: err.message,
+        });
     }
 }
 
@@ -68,38 +68,21 @@ export const createHabit = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Name and category are required' });
         }
 
-        const habit = new Habit({ 
-            name, 
-            category, 
-            frequency, 
-            timeOfDay, 
-            duration, 
-            date, 
+        const habit = new Habit({
+            name,
+            category,
+            frequency,
+            timeOfDay,
+            duration,
+            date,
             userId,
-            events: {
-                title: name,
-                start: startDateTime,
-                end: endDateTime
-            }
         });
 
         const savedHabit = await habit.save();
 
-        const endTime = calculateEndTime(timeOfDay, duration);
-
-        const startDateTime = new Date(`${date}T${timeOfDay}:00`);
-        const endDateTime = new Date(`${date}T${endTime}:00`);
-
-        const event = {
-            title: savedHabit.name,
-            start: startDateTime.toISOString(),
-            end: endDateTime.toISOString()
-        }
-
         res.status(201).json({
             success: true,
-            habit: savedHabit,
-            event: event,
+            habit: savedHabit
         });
     } catch (err) {
         console.error("Error creating habit:", err);
@@ -111,8 +94,8 @@ export const createHabit = async (req, res, next) => {
 // @route   PUT /api/habits/:id
 // @access   Private
 export const updateHabit = async (req, res, next) => {
-    const userId = req.user.uid; 
-    const id = req.params.id; 
+    const userId = req.user.uid;
+    const id = req.params.id;
 
     try {
         const habit = await Habit.findOne({ _id: id, userId });
