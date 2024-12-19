@@ -12,14 +12,8 @@ const habitSchema = new mongoose.Schema({
             'Sports',
             'Nutrition',
             'Mental health',
-            'Sleep',
             'Learning',
-            'Work',
-            'Finances',
-            'Music',
             'Art',
-            'Sustainability',
-            'Personal growth'
         ],
         message: 'Please select a valid category'
     },
