@@ -51,6 +51,9 @@ const habitSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    completedDays: {
+        type: [String]
+    },
     userId: {
         type: String,
         ref: 'User'

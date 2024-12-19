@@ -1,9 +1,8 @@
 import Habit from "../models/habits.js";
-import { calculateEndTime } from "../utils/calculateEndTime.js";
 
 // @desc   Get all habits
 // @route   GET /api/habits
-// @access   Public
+// @access   Private
 export const getHabits = async (req, res, next) => {
     const userId = req.user.uid;
 
@@ -35,7 +34,7 @@ export const getHabits = async (req, res, next) => {
 
 // @desc   Get single habit
 // @route   GET /api/habits/:id
-// @access   Public
+// @access   Private
 export const getHabit = async (req, res, next) => {
     const userId = req.user.uid;
     const id = req.params.id;
