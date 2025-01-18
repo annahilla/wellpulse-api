@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import habits from './routes/habits.js';
 import options from './routes/options.js';
+import locations from './routes/locations.js'
 import auth from './routes/auth.js'
 import admin from 'firebase-admin';
 import path from "path";
@@ -24,7 +25,7 @@ try {
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:5173", 
+  origin: "http://localhost:5173",
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
@@ -33,6 +34,7 @@ app.use(express.json());
 app.use("/api/habits", habits);
 app.use("/api/options", options);
 app.use("/api/auth", auth);
+app.use("/api/locations", locations);
 
 if (!dbURI) {
   console.error("Error: MONGODB_URI isn't defined");
