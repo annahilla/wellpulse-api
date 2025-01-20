@@ -16,7 +16,7 @@ export const getHabits = async (req, res, next) => {
 
     try {
         console.log("Fetching habits for user: ", userId);
-        const habits = await Habit.find({ userId });
+        const habits = await Habit.find({ userId }).populate("location");
         res.status(200).json({
             success: true,
             results: habits.length,
@@ -62,9 +62,18 @@ export const getHabit = async (req, res, next) => {
 export const createHabit = async (req, res, next) => {
     const userId = req.user.uid;
     try {
-        const { name, category, frequency, timeOfDay, duration, date } = req.body;
+        const { name, category, frequency, timeOfDay, duration, location, date } = req.body;
         if (!name || !category) {
             return res.status(400).json({ success: false, message: 'Name and category are required' });
+        }
+
+        let validLocation = null;
+
+        if (location) {
+            validLocation = await Location.findById(location);
+            if (!validLocation) {
+                return res.status(400).json({ success: false, message: "Invalid location ID" });
+            }
         }
 
         const habit = new Habit({
@@ -74,6 +83,7 @@ export const createHabit = async (req, res, next) => {
             timeOfDay,
             duration,
             date,
+            location: validLocation ? validLocation._id : null,
             userId,
         });
 
@@ -106,6 +116,13 @@ export const updateHabit = async (req, res, next) => {
             });
         }
 
+        if (req.body.location) {
+            const validLocation = await Location.findById(req.body.location);
+            if (!validLocation) {
+                return res.status(400).json({ success: false, message: "Invalid location ID" });
+            }
+        }
+
         const updatedHabit = await Habit.findByIdAndUpdate(
             id,
             req.body,
@@ -113,7 +130,7 @@ export const updateHabit = async (req, res, next) => {
                 new: true,
                 runValidators: true,
             }
-        );
+        ).populate("location");
 
         res.status(200).json({
             success: true,

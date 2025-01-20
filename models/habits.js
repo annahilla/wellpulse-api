@@ -48,6 +48,11 @@ const habitSchema = new mongoose.Schema({
     completedDays: {
         type: [String]
     },
+    location: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Location",
+        required: false
+    },
     userId: {
         type: String,
         ref: 'User'
