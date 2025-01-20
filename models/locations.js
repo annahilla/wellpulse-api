@@ -19,6 +19,8 @@ const locationSchema = new mongoose.Schema({
             "craftWorkshops",
         ],
     },
+    direction: { type: String, required: true },
+    website: { type: String, required: true },
     position: {
         lat: { type: Number, required: true },
         lng: { type: Number, required: true },
