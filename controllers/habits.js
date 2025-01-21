@@ -63,17 +63,22 @@ export const createHabit = async (req, res, next) => {
     const userId = req.user.uid;
     try {
         const { name, category, frequency, timeOfDay, duration, location, date } = req.body;
+
         if (!name || !category) {
             return res.status(400).json({ success: false, message: 'Name and category are required' });
         }
 
-        let validLocation = null;
+        let locationData = null;
 
         if (location) {
-            validLocation = await Location.findById(location);
-            if (!validLocation) {
-                return res.status(400).json({ success: false, message: "Invalid location ID" });
-            }
+            locationData = {
+                _id: location._id,
+                name: location.name,
+                category: location.category,
+                position: location.position,
+                direction: location.direction,
+                website: location.website
+            };
         }
 
         const habit = new Habit({
@@ -83,7 +88,7 @@ export const createHabit = async (req, res, next) => {
             timeOfDay,
             duration,
             date,
-            location: validLocation ? validLocation._id : null,
+            location: locationData,
             userId,
         });
 
@@ -105,6 +110,7 @@ export const createHabit = async (req, res, next) => {
 export const updateHabit = async (req, res, next) => {
     const userId = req.user.uid;
     const id = req.params.id;
+    let updateData = { ...req.body }
 
     try {
         const habit = await Habit.findOne({ _id: id, userId });
@@ -117,20 +123,23 @@ export const updateHabit = async (req, res, next) => {
         }
 
         if (req.body.location) {
-            const validLocation = await Location.findById(req.body.location);
-            if (!validLocation) {
-                return res.status(400).json({ success: false, message: "Invalid location ID" });
+            const { _id, name, category, position, direction, website } = req.body.location;
+
+            if (!_id || !name) {
+                return res.status(400).json({ success: false, message: "Invalid location data" });
             }
+
+            updateData.location = { _id, name, category, position, direction, website };
         }
 
         const updatedHabit = await Habit.findByIdAndUpdate(
             id,
-            req.body,
+            updateData,
             {
                 new: true,
                 runValidators: true,
             }
-        ).populate("location");
+        );
 
         res.status(200).json({
             success: true,
