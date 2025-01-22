@@ -113,8 +113,8 @@ export const updateHabit = async (req, res, next) => {
     let updateData = { ...req.body }
 
     try {
-        const habit = await Habit.findOne({ _id: id, userId });
-
+        const habit = await Habit.findOne({ _id: id, userId }).populate('location');
+        
         if (!habit) {
             return res.status(404).json({
                 success: false,
@@ -122,9 +122,9 @@ export const updateHabit = async (req, res, next) => {
             });
         }
 
-        if (req.body.location) {
-            const { _id, name, category, position, direction, website } = req.body.location;
-
+        if (habit.location) {
+            const { _id, name, category, position, direction, website } = habit.location;
+            console.log("location name:", name)
             if (!_id || !name) {
                 return res.status(400).json({ success: false, message: "Invalid location data" });
             }
