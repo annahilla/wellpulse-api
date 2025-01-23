@@ -25,7 +25,7 @@ try {
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "https://wellpulse-api.vercel.app/"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
