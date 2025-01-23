@@ -51,7 +51,7 @@ mongoose.connect(dbURI)
     console.error('Error connecting to MongoDB:', err);
   });
 
-
+export default app;
 
 
 
