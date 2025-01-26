@@ -1,6 +1,6 @@
 # WellPulse API
 
-This is the API for my application WellPulse, a platform designed to help users track their habits and find healthy lifestyle locations. The backend is built with Node.js, Express, MongoDB, and Firebase for authentication.
+This is the API for my application [WellPulse](https://github.com/annahilla/wellpulse), a platform designed to help users track their habits and find healthy lifestyle locations. The backend is built with Node.js, Express, MongoDB, and Firebase for authentication.
 
 ## Table of Contents
 
@@ -101,7 +101,3 @@ This project uses Firebase Authentication. Each request requiring authentication
 ```sh
 Authorization: Bearer <your-firebase-token>
 ```
-
-## Deployment
-
-The backend is deployed on [Vercel](https://wellpulse-api.vercel.app/).
