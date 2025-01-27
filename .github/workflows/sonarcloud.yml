@@ -58,7 +58,7 @@ jobs:
             -Dsonar.projectKey=wellpulse-api
             -Dsonar.organization=annahilla
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.sources=src
+            -Dsonar.sources=.
             -Dsonar.exclusions=**/node_modules/**
             # Comma-separated paths to directories containing main source files.
             #-Dsonar.sources= # optional, default is project base directory
