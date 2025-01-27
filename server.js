@@ -13,9 +13,13 @@ const NODE_ENV = process.env.NODE_ENV;
 const dbURI = process.env.MONGODB_URI;
 const serviceAccountPath = path.resolve(`./config/${process.env.SERVICE_ACCOUNT_KEY}.json`);
 
+const serviceAccount = JSON.parse(
+  Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT, 'base64').toString('utf8')
+);
+
 try {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountPath),
+    credential: admin.credential.cert(serviceAccount),
   });
   console.log("Firebase Admin SDK initialized successfully.");
 } catch (error) {
@@ -25,7 +29,7 @@ try {
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "https://wellpulse-api.vercel.app"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
@@ -51,7 +55,7 @@ mongoose.connect(dbURI)
     console.error('Error connecting to MongoDB:', err);
   });
 
-
+export default app;
 
 
 
